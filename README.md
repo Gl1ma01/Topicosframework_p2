@@ -62,7 +62,7 @@ Uma academia vende **planos** (Mensal, Trimestral, Anual…). Cada **aluno** é 
 
 ## Como executar do zero
 
-Pré-requisitos: [.NET SDK 10](https://dotnet.microsoft.com/download) e [Node.js 20+](https://nodejs.org).
+Pré-requisitos: [.NET SDK 10](https://dotnet.microsoft.com/download) e [Node.js 22.22+ ou 24.15+](https://nodejs.org) (exigência do Angular 22).
 
 ```bash
 # 1. Testes da biblioteca

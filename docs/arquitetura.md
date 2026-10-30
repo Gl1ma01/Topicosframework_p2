@@ -86,3 +86,25 @@ erDiagram
 - **DTOs em vez de entidades na resposta:** evitam ciclos de serialização (Aluno ↔ Plano) e expõem só o necessário.
 - **SQLite:** é um arquivo único, sem servidor para instalar, e os dados sobrevivem a reinícios.
 - **Angular standalone e zoneless, com signals:** é o padrão atual do Angular. O estado das telas fica em `signal()`, que avisa o Angular quando precisa redesenhar.
+
+## Padrões de projeto usados
+
+| Padrão | Onde |
+|--------|------|
+| **Injeção de Dependência** | `Program.cs` registra os Services (`AddScoped`) e o `AcademiaContext`, e os Controllers os recebem pelo construtor |
+| **Camada de Serviço (Service Layer)** | `Services/*Service.cs`: as regras de negócio ficam fora do Controller |
+| **DTO (Data Transfer Object)** | `Modelos/Dtos.cs`: o que entra e sai da API é separado das entidades do banco |
+| **Unit of Work / Repository** | o `AcademiaContext` (EF Core) agrupa as alterações e grava tudo em `SaveChangesAsync()` |
+| **Filtro / Pipeline** | `RegraNegocioFiltro` (exceção → 400) no back; `tokenInterceptor` (anexa o JWT) e `authGuard` (protege as rotas) no front |
+
+## Escolha dos frameworks
+
+- **ASP.NET Core:** traz injeção de dependência, autenticação JWT e roteamento prontos, integra direto com o EF Core e é o framework da disciplina.
+- **EF Core + SQLite:** com Code First o modelo vive no C#, e as migrations versionam a evolução do banco. O SQLite dispensa servidor.
+- **Angular (standalone):** é um framework completo, com roteador, HttpClient, interceptors e guards nativos, e em TypeScript, então os tipos do front espelham os DTOs da API.
+
+## Metodologia
+
+O histórico do Git mostra uma entrega incremental, em que cada etapa funciona e é testada antes da próxima: biblioteca 1.0.0 → biblioteca 1.1.0 → API com a migration inicial → evolução (telefone + migration 2) → front-end → documentação.
+
+_[preencher pelo grupo: como vocês se organizaram (divisão de tarefas, quadro Kanban, reuniões, etc.)]_

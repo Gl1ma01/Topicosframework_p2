@@ -2,7 +2,6 @@ using System.Text;
 using AcademiaApi.Dados;
 using AcademiaApi.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -20,8 +19,9 @@ builder.Services.AddScoped<MensalidadeService>();
 builder.Services.AddScoped<RelatorioService>();
 builder.Services.AddScoped<AuthService>();
 
-// Erros de modelo (ex.: JSON malformado) também saem como 400 { erros: [...] }
-builder.Services.AddControllers().ConfigureApiBehaviorOptions(o =>
+// RegraNegocioException vira 400 { erros: [...] } (RegraNegocioFiltro).
+// Erros de modelo (ex.: JSON malformado) também saem como 400 { erros: [...] }.
+builder.Services.AddControllers(o => o.Filters.Add<RegraNegocioFiltro>()).ConfigureApiBehaviorOptions(o =>
     o.InvalidModelStateResponseFactory = ctx => new BadRequestObjectResult(new
     {
         erros = new[] { "Requisição inválida: verifique o formato do JSON e os tipos dos campos." }
@@ -60,20 +60,11 @@ using (var scope = app.Services.CreateScope())
     SeedDados.Executar(db);
 }
 
-// RegraNegocioException -> 400 com as mensagens; qualquer outra coisa -> 500 genérico
+// Rede de segurança: falha inesperada vira 500 genérico, sem expor detalhes internos
 app.UseExceptionHandler(erro => erro.Run(async ctx =>
 {
-    var ex = ctx.Features.Get<IExceptionHandlerFeature>()?.Error;
-    if (ex is RegraNegocioException regra)
-    {
-        ctx.Response.StatusCode = StatusCodes.Status400BadRequest;
-        await ctx.Response.WriteAsJsonAsync(new { erros = regra.Erros });
-    }
-    else
-    {
-        ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await ctx.Response.WriteAsJsonAsync(new { erros = new[] { "Erro interno no servidor." } });
-    }
+    ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
+    await ctx.Response.WriteAsJsonAsync(new { erros = new[] { "Erro interno no servidor." } });
 }));
 
 app.UseCors("Frontend");
