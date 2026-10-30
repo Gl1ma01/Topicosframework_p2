@@ -7,8 +7,8 @@ public record TokenDto(string Token, DateTime ExpiraEm);
 public record PlanoEntradaDto(string? Nome, decimal ValorMensal, int DuracaoMeses);
 public record PlanoDto(int Id, string Nome, decimal ValorMensal, int DuracaoMeses, int QuantidadeAlunos);
 
-public record AlunoEntradaDto(string? Nome, string? Cpf, string? Email, DateOnly DataNascimento, int PlanoId);
-public record AlunoDto(int Id, string Nome, string Cpf, string Email, DateOnly DataNascimento, int PlanoId, string NomePlano);
+public record AlunoEntradaDto(string? Nome, string? Cpf, string? Email, DateOnly DataNascimento, int PlanoId, string? Telefone);
+public record AlunoDto(int Id, string Nome, string Cpf, string Email, DateOnly DataNascimento, int PlanoId, string NomePlano, string? Telefone);
 
 public record MensalidadeEntradaDto(int AlunoId, decimal Valor, DateOnly Vencimento);
 public record MensalidadeDto(int Id, int AlunoId, decimal Valor, DateOnly Vencimento, DateOnly? DataPagamento, string Status);

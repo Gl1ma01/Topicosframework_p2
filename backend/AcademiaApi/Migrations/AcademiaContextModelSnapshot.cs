@@ -41,6 +41,9 @@ namespace AcademiaApi.Migrations
                     b.Property<int>("PlanoId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Telefone")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Cpf")

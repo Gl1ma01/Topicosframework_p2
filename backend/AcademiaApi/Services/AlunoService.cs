@@ -11,12 +11,12 @@ public class AlunoService(AcademiaContext db)
 
     public async Task<List<AlunoDto>> Listar() =>
         await db.Alunos.OrderBy(a => a.Nome)
-            .Select(a => new AlunoDto(a.Id, a.Nome, a.Cpf, a.Email, a.DataNascimento, a.PlanoId, a.Plano!.Nome))
+            .Select(a => new AlunoDto(a.Id, a.Nome, a.Cpf, a.Email, a.DataNascimento, a.PlanoId, a.Plano!.Nome, a.Telefone))
             .ToListAsync();
 
     public async Task<AlunoDto?> Obter(int id) =>
         await db.Alunos.Where(a => a.Id == id)
-            .Select(a => new AlunoDto(a.Id, a.Nome, a.Cpf, a.Email, a.DataNascimento, a.PlanoId, a.Plano!.Nome))
+            .Select(a => new AlunoDto(a.Id, a.Nome, a.Cpf, a.Email, a.DataNascimento, a.PlanoId, a.Plano!.Nome, a.Telefone))
             .FirstOrDefaultAsync();
 
     // Regra de negócio: ao matricular, gera a primeira mensalidade com o valor do plano.
@@ -58,6 +58,7 @@ public class AlunoService(AcademiaContext db)
     private async Task<Plano> ValidarAsync(AlunoEntradaDto dto, int? idAtual)
     {
         var erros = ValidadorAluno.Validar(dto.Nome, dto.Cpf, dto.Email, dto.DataNascimento, DateOnly.FromDateTime(DateTime.Today));
+        erros.AddRange(ValidadorAluno.ValidarTelefone(dto.Telefone)); // regra nova da 1.1.0
 
         var cpf = SomenteDigitos(dto.Cpf);
         if (erros.Count == 0 && await db.Alunos.AnyAsync(a => a.Cpf == cpf && a.Id != idAtual))
@@ -77,6 +78,7 @@ public class AlunoService(AcademiaContext db)
         aluno.Email = dto.Email!.Trim();
         aluno.DataNascimento = dto.DataNascimento;
         aluno.PlanoId = dto.PlanoId;
+        aluno.Telefone = string.IsNullOrWhiteSpace(dto.Telefone) ? null : dto.Telefone.Trim();
     }
 
     private static string SomenteDigitos(string? texto) => new((texto ?? "").Where(char.IsDigit).ToArray());

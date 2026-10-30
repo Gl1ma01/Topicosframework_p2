@@ -16,6 +16,7 @@ public class Aluno
     public string Cpf { get; set; } = "";
     public string Email { get; set; } = "";
     public DateOnly DataNascimento { get; set; }
+    public string? Telefone { get; set; } // adicionado na migration AdicionaTelefoneAluno
     public int PlanoId { get; set; }
     public Plano? Plano { get; set; }
     public List<Mensalidade> Mensalidades { get; set; } = [];
