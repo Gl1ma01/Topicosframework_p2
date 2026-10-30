@@ -3,9 +3,8 @@
 Sistema full-stack para gestão de uma academia: planos, alunos e mensalidades, com relatório financeiro do mês.
 
 **Integrantes:**
-- _[preencher]_
-- _[preencher]_
-- _[preencher]_
+- Gabriel Lima Ceretta
+- Rafael Ferreira Vetrenka
 
 ## Cenário
 
@@ -62,7 +61,16 @@ Uma academia vende **planos** (Mensal, Trimestral, Anual…). Cada **aluno** é 
 
 ## Como executar do zero
 
-Pré-requisitos: [.NET SDK 10](https://dotnet.microsoft.com/download) e [Node.js 22.22+ ou 24.15+](https://nodejs.org) (exigência do Angular 22).
+### Requisitos (versões obrigatórias)
+
+| Ferramenta | Versão |
+|------------|--------|
+| [.NET SDK](https://dotnet.microsoft.com/download) | **10.0** (o projeto usa `net10.0` e `.slnx`; .NET 8/9 não compilam) |
+| [Node.js](https://nodejs.org) | **22.22+ ou 24.15+** (exigência do Angular 22) |
+| Angular | 22 (vem pelo `npm install`; não precisa de CLI global) |
+| dotnet-ef | 10.0.14 (vem pelo `dotnet tool restore`) |
+
+Confira com `dotnet --version` e `node --version`.
 
 ```bash
 # 1. Testes da biblioteca
