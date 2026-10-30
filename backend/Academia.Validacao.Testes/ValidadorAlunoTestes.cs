@@ -92,3 +92,35 @@ public class ValidadorAlunoTestes
         Assert.Equal(25, idade);
     }
 }
+
+public class ValidadorTelefoneTestes
+{
+    [Theory]
+    [InlineData("(11) 98765-4321")]
+    [InlineData("1133334444")]
+    [InlineData(null)]
+    public void ValidarTelefone_TelefoneValidoOuVazio_NaoRetornaErros(string? telefone)
+    {
+        // Arrange (dados no InlineData)
+
+        // Act
+        var erros = ValidadorAluno.ValidarTelefone(telefone);
+
+        // Assert
+        Assert.Empty(erros);
+    }
+
+    [Theory]
+    [InlineData("98765")]
+    [InlineData("11 9876A-4321")]
+    public void ValidarTelefone_TelefoneInvalido_RetornaErro(string telefone)
+    {
+        // Arrange (dados no InlineData)
+
+        // Act
+        var erros = ValidadorAluno.ValidarTelefone(telefone);
+
+        // Assert
+        Assert.Single(erros);
+    }
+}

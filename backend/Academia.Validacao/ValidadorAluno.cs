@@ -25,6 +25,19 @@ public static class ValidadorAluno
         return erros;
     }
 
+    // Adicionado na 1.1.0. Telefone é opcional; se informado, precisa ter DDD + número (10 ou 11 dígitos).
+    public static List<string> ValidarTelefone(string? telefone)
+    {
+        var erros = new List<string>();
+        if (string.IsNullOrWhiteSpace(telefone)) return erros;
+
+        var digitos = telefone.Count(char.IsDigit);
+        if (digitos is < 10 or > 11 || telefone.Any(c => char.IsLetter(c)))
+            erros.Add("Telefone inválido. Use DDD + número, ex.: (11) 98765-4321.");
+
+        return erros;
+    }
+
     public static int CalcularIdade(DateOnly dataNascimento, DateOnly hoje)
     {
         var idade = hoje.Year - dataNascimento.Year;
