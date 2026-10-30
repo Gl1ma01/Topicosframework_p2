@@ -57,7 +57,10 @@ public class AlunoService(AcademiaContext db)
     // Validação de campos vem da biblioteca; CPF único e plano existente são regras de negócio daqui.
     private async Task<Plano> ValidarAsync(AlunoEntradaDto dto, int? idAtual)
     {
-        var erros = ValidadorAluno.Validar(dto.Nome, dto.Cpf, dto.Email, dto.DataNascimento, DateOnly.FromDateTime(DateTime.Today));
+        var hoje = DateOnly.FromDateTime(DateTime.Today);
+        // sem data, a idade não é checada pela biblioteca e entra a mensagem própria abaixo
+        var erros = ValidadorAluno.Validar(dto.Nome, dto.Cpf, dto.Email, dto.DataNascimento ?? hoje.AddYears(-ValidadorAluno.IdadeMinima), hoje);
+        if (dto.DataNascimento is null) erros.Add("Informe a data de nascimento.");
         erros.AddRange(ValidadorAluno.ValidarTelefone(dto.Telefone)); // regra nova da 1.1.0
 
         var cpf = SomenteDigitos(dto.Cpf);
@@ -76,7 +79,7 @@ public class AlunoService(AcademiaContext db)
         aluno.Nome = dto.Nome!.Trim();
         aluno.Cpf = SomenteDigitos(dto.Cpf);
         aluno.Email = dto.Email!.Trim();
-        aluno.DataNascimento = dto.DataNascimento;
+        aluno.DataNascimento = dto.DataNascimento!.Value;
         aluno.PlanoId = dto.PlanoId;
         aluno.Telefone = string.IsNullOrWhiteSpace(dto.Telefone) ? null : dto.Telefone.Trim();
     }

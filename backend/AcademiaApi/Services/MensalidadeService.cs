@@ -23,11 +23,12 @@ public class MensalidadeService(AcademiaContext db)
 
     public async Task<MensalidadeDto> Criar(MensalidadeEntradaDto dto)
     {
-        var erros = ValidadorMensalidade.Validar(dto.Valor, dto.Vencimento, null);
+        var erros = ValidadorMensalidade.Validar(dto.Valor, dto.Vencimento ?? DateOnly.FromDateTime(DateTime.Today), null);
+        if (dto.Vencimento is null) erros.Add("Informe a data de vencimento.");
         if (!await db.Alunos.AnyAsync(a => a.Id == dto.AlunoId)) erros.Add("Aluno informado não existe.");
         if (erros.Count > 0) throw new RegraNegocioException(erros);
 
-        var m = new Mensalidade { AlunoId = dto.AlunoId, Valor = dto.Valor, Vencimento = dto.Vencimento };
+        var m = new Mensalidade { AlunoId = dto.AlunoId, Valor = dto.Valor, Vencimento = dto.Vencimento!.Value };
         db.Mensalidades.Add(m);
         await db.SaveChangesAsync();
         return ParaDto(m);
