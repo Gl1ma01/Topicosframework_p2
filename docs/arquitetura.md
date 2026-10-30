@@ -107,4 +107,10 @@ erDiagram
 
 O histórico do Git mostra uma entrega incremental, em que cada etapa funciona e é testada antes da próxima: biblioteca 1.0.0 → biblioteca 1.1.0 → API com a migration inicial → evolução (telefone + migration 2) → front-end → documentação.
 
-_[preencher pelo grupo: como vocês se organizaram (divisão de tarefas, quadro Kanban, reuniões, etc.)]_
+Como éramos só em dois, a gente decidiu não usar um Scrum "completo", com sprint, daily e todas as cerimônias. Para um grupo desse tamanho e com o prazo da P2, isso ia tomar mais tempo organizando do que fazendo. Ficamos com algo mais próximo de um Kanban simples: uma lista do que faltava (biblioteca, testes, pacote, API, banco, login, front, documentação), e cada item só saía da lista quando estava funcionando e testado.
+
+A ordem seguiu o mesmo caminho que fizemos em sala com o Cadastro de Alunos: primeiro as regras de validação e os testes, porque o resto do sistema depende delas, depois a API e o banco e por último o front. Isso ajudou bastante: quando chegamos no Angular, a API já estava pronta e testada, então qualquer erro na tela era do front e não "de algum lugar".
+
+Um exemplo de onde essa forma de trabalhar fez diferença foi a regra de telefone. Ela surgiu no meio do desenvolvimento, e em vez de mexer na versão que a API já usava, publicamos a biblioteca como 1.1.0 e criamos uma migration nova. Foi aí que o SemVer e as migrations fizeram sentido na prática para a gente, porque deu para evoluir sem quebrar o que já funcionava.
+
+O que faríamos diferente: começar o README e a documentação junto com o código, e não só no final. Mapear os requisitos R1 a R9 no fim deu mais trabalho do que se tivéssemos anotado conforme íamos fazendo.
