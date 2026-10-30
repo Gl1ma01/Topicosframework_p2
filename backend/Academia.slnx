@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="Academia.Validacao.Testes/Academia.Validacao.Testes.csproj" />
+  <Project Path="Academia.Validacao/Academia.Validacao.csproj" />
+  <Project Path="AcademiaApi/AcademiaApi.csproj" />
+</Solution>
