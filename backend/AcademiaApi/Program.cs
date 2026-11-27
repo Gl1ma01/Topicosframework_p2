@@ -45,7 +45,7 @@ builder.Services.AddAuthorization();
 
 // CORS para o front Angular
 builder.Services.AddCors(o => o.AddPolicy("Frontend", p => p
-    .WithOrigins("http://localhost:4200")
+    .WithOrigins("http://localhost:4200", "http://127.0.0.1:4200")
     .AllowAnyHeader()
     .AllowAnyMethod()
     .WithExposedHeaders("Location")));
@@ -66,6 +66,14 @@ app.UseExceptionHandler(erro => erro.Run(async ctx =>
     ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
     await ctx.Response.WriteAsJsonAsync(new { erros = new[] { "Erro interno no servidor." } });
 }));
+
+// POST/PUT sem Content-Type (ex.: curl sem -H) cairia em 415; tratamos como JSON para responder 400 com mensagem clara.
+app.Use((ctx, next) =>
+{
+    if (ctx.Request.ContentType is null && (HttpMethods.IsPost(ctx.Request.Method) || HttpMethods.IsPut(ctx.Request.Method)))
+        ctx.Request.ContentType = "application/json";
+    return next();
+});
 
 app.UseCors("Frontend");
 app.UseAuthentication();

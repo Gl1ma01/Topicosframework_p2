@@ -2,6 +2,8 @@ namespace Academia.Validacao;
 
 public static class ValidadorPlano
 {
+    public const decimal ValorMaximo = 1_000_000m;
+
     public static List<string> Validar(string? nome, decimal valorMensal, int duracaoMeses)
     {
         var erros = new List<string>();
@@ -11,6 +13,8 @@ public static class ValidadorPlano
 
         if (valorMensal <= 0)
             erros.Add("O valor mensal deve ser maior que zero.");
+        else if (valorMensal > ValorMaximo)
+            erros.Add("O valor mensal deve ser no máximo R$ 1.000.000,00.");
 
         if (duracaoMeses < 1 || duracaoMeses > 24)
             erros.Add("A duração do plano deve ser entre 1 e 24 meses.");

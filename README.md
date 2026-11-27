@@ -23,6 +23,8 @@ Uma academia vende **planos** (Mensal, Trimestral, Anual…). Cada **aluno** é 
 | 7 | Plano | Duração entre 1 e 24 meses | 1.0.0 |
 | 8 | Mensalidade | Valor maior que zero | 1.0.0 |
 | 9 | Aluno | Telefone opcional; se informado, DDD + número (10 ou 11 dígitos) | **1.1.0** |
+| 10 | Plano | Valor mensal de no máximo R$ 1.000.000,00 | **1.1.1** |
+| 11 | Mensalidade | Valor de no máximo R$ 1.000.000,00 | **1.1.1** |
 
 ### Regras de negócio (Services da API)
 
@@ -45,9 +47,9 @@ Uma academia vende **planos** (Mensal, Trimestral, Anual…). Cada **aluno** é 
 
 | Req. | Onde | Detalhe |
 |------|------|---------|
-| **R1** Class Library | `backend/Academia.Validacao/` → `ValidadorAluno`, `ValidadorPlano`, `ValidadorMensalidade` | 9 regras, 3 entidades. Sem dependência de ASP.NET Core nem EF Core (ver `.csproj`) |
-| **R2** xUnit | `backend/Academia.Validacao.Testes/` → `ValidadorAlunoTestes`, `ValidadorTelefoneTestes`, `ValidadorPlanoTestes`, `ValidadorMensalidadeTestes` | 25 casos, padrão Arrange-Act-Assert, vários `[Theory]` + `[InlineData]` (ex.: `CpfValido_VariosCpfs_RetornaEsperado`) |
-| **R3** NuGet + SemVer | `backend/FeedNuGetLocal/` (1.0.0 e 1.1.0), `backend/nuget.config`, `AcademiaApi.csproj` → `<PackageReference Include="Academia.Validacao" Version="1.1.0" />` | 1.0.0 → 1.1.0 é **MINOR**: adiciona `ValidadorAluno.ValidarTelefone` sem mudar nem remover nada da 1.0.0, então quem usa a 1.0.0 atualiza sem quebrar |
+| **R1** Class Library | `backend/Academia.Validacao/` → `ValidadorAluno`, `ValidadorPlano`, `ValidadorMensalidade` | 11 regras, 3 entidades. Sem dependência de ASP.NET Core nem EF Core (ver `.csproj`) |
+| **R2** xUnit | `backend/Academia.Validacao.Testes/` → `ValidadorAlunoTestes`, `ValidadorTelefoneTestes`, `ValidadorPlanoTestes`, `ValidadorMensalidadeTestes` | 29 casos, padrão Arrange-Act-Assert, vários `[Theory]` + `[InlineData]` (ex.: `CpfValido_VariosCpfs_RetornaEsperado`) |
+| **R3** NuGet + SemVer | `backend/FeedNuGetLocal/` (1.0.0, 1.1.0 e 1.1.1), `backend/nuget.config`, `AcademiaApi.csproj` → `<PackageReference Include="Academia.Validacao" Version="1.1.1" />` | 1.0.0 → 1.1.0 é **MINOR**: adiciona `ValidadorAluno.ValidarTelefone` sem mudar nem remover nada da 1.0.0, então quem usa a 1.0.0 atualiza sem quebrar. 1.1.0 → 1.1.1 é **PATCH**: corrige um defeito (valor sem teto estourava o relatório) sem mudar a API pública |
 | **R4** Web API + DI | `AcademiaApi/Program.cs` (`AddScoped<PlanoService>()` etc.), `Controllers/*` recebem os Services pelo construtor | Controllers só chamam o Service e devolvem a resposta; regras ficam em `Services/` |
 | **R5** EF Core Code First | `Dados/AcademiaContext.cs` (SQLite, relacionamentos em `OnModelCreating`), `Migrations/` | Migrations `Inicial` e `AdicionaTelefoneAluno` (evolução do modelo) |
 | **R6** CRUD + status HTTP | `PlanosController` e `AlunosController` (CRUD completo), `MensalidadesController` | 200 (GET), 201 + `Location` (`CreatedAtAction`), 204 (PUT/DELETE), 400 `{ "erros": [...] }` com as mensagens da biblioteca, 404 (id inexistente) |
@@ -57,7 +59,7 @@ Uma academia vende **planos** (Mensal, Trimestral, Anual…). Cada **aluno** é 
 
 **Relatório:** `GET /api/relatorios/financeiro?ano=2026&mes=10` (`RelatorioService.Financeiro`) devolve o previsto, o recebido e o em aberto do mês, além dos inadimplentes com os dias de atraso. A tela fica em **Relatório**.
 
-**Nunca 500 para entrada do usuário:** dado inválido → 400 (biblioteca + `RegraNegocioException`), JSON malformado ou de tipo errado → 400 (`InvalidModelStateResponseFactory`), id inexistente → 404, id não numérico → 404 (`{id:int}`).
+**Nunca 500 para entrada do usuário:** dado inválido → 400 (biblioteca + `RegraNegocioException`), JSON malformado, de tipo errado ou corpo vazio → 400 (`InvalidModelStateResponseFactory`; POST/PUT sem `Content-Type` são tratados como JSON em `Program.cs`), valor acima de R$ 1.000.000,00 → 400 (biblioteca, para a soma do relatório não estourar), id inexistente → 404, id não numérico → 404 (`{id:int}`).
 
 ## Como executar do zero
 

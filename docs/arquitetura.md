@@ -20,7 +20,7 @@ flowchart LR
         C --> SV --> DB
     end
 
-    L[[Academia.Validacao<br/>Class Library<br/>pacote NuGet 1.1.0]]
+    L[[Academia.Validacao<br/>Class Library<br/>pacote NuGet 1.1.1]]
     T[Academia.Validacao.Testes<br/>xUnit]
     F[(SQLite<br/>academia.db)]
 
@@ -81,7 +81,7 @@ erDiagram
 ## Decisões técnicas
 
 - **Validação numa biblioteca separada:** as regras do domínio não dependem do framework web. Dá para testá-las isoladas (xUnit) e reutilizá-las em outro projeto pelo NuGet.
-- **Biblioteca como pacote NuGet (não ProjectReference):** a API depende de uma versão fixa. A evolução 1.0.0 → 1.1.0 (MINOR, pelo SemVer) adicionou a regra de telefone sem quebrar quem usa a 1.0.0.
+- **Biblioteca como pacote NuGet (não ProjectReference):** a API depende de uma versão fixa. A evolução 1.0.0 → 1.1.0 (MINOR, pelo SemVer) adicionou a regra de telefone sem quebrar quem usa a 1.0.0. A 1.1.1 (PATCH) corrigiu um defeito sem mudar a API pública: valores sem teto estouravam a soma do relatório, e agora a biblioteca limita o valor a R$ 1.000.000,00.
 - **Controller fino + Service:** é o padrão de camadas. O Controller só traduz HTTP, e o Service concentra a regra de negócio. Os Services entram pelo construtor (injeção de dependência), o que facilita trocar e testar.
 - **DTOs em vez de entidades na resposta:** evitam ciclos de serialização (Aluno ↔ Plano) e expõem só o necessário.
 - **SQLite:** é um arquivo único, sem servidor para instalar, e os dados sobrevivem a reinícios.

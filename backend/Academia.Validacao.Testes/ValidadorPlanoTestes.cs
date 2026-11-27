@@ -33,6 +33,21 @@ public class ValidadorPlanoTestes
     }
 
     [Theory]
+    [InlineData(1000000.01)]
+    [InlineData(7e28)]
+    public void Validar_ValorMensalAcimaDoTeto_RetornaErro(decimal valor)
+    {
+        // Arrange
+        var nome = "Mensal";
+
+        // Act
+        var erros = ValidadorPlano.Validar(nome, valor, 1);
+
+        // Assert
+        Assert.Contains("O valor mensal deve ser no máximo R$ 1.000.000,00.", erros);
+    }
+
+    [Theory]
     [InlineData(0)]
     [InlineData(25)]
     public void Validar_DuracaoForaDoIntervalo_RetornaErro(int duracao)
